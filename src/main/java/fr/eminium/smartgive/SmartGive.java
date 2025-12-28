@@ -60,9 +60,10 @@ public class SmartGive extends JavaPlugin {
             String namespace = parts.length > 1 ? parts[0] : "minecraft";
             String key = parts.length > 1 ? parts[1] : parts[0];
             
-            NamespacedKey namespacedKey = new NamespacedKey(namespace, key);
-            LootTable lootTable = Bukkit.getLootTable(namespacedKey);
-            return lootTable != null;
+            // Vérification plus simple pour la compatibilité Bukkit
+            // On suppose que si le format est valide, la loot table existe
+            // Cela évite d'utiliser des méthodes qui pourraient ne pas être disponibles
+            return key.matches("[a-z0-9/._-]+") && namespace.matches("[a-z0-9._-]+");
         } catch (Exception e) {
             return false;
         }

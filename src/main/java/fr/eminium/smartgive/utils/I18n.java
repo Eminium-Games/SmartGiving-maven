@@ -89,8 +89,13 @@ public class I18n {
     }
     
     public static String translate(CommandSender sender, String key, Object... args) {
-        Locale locale = (sender instanceof Player) ? 
-            ((Player) sender).locale() : defaultLocale;
+        Locale locale = defaultLocale;
+        if (sender instanceof Player) {
+            String lang = ((Player) sender).getLocale();
+            if (lang != null && !lang.isEmpty()) {
+                locale = new Locale(lang.split("_")[0]);
+            }
+        }
         return translate(locale, key, args);
     }
     
