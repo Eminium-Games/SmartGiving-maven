@@ -11,17 +11,10 @@ commands:
     description: Donne un item ou un loot à un joueur
     usage: /give <joueur> <item|loottable> [quantité]
     permission: minecraft.command.give
-  smartgive:
-    description: Alias de /give
-    usage: /smartgive <joueur> <item|loottable> [quantité]
-    permission: smartgive.use
-    aliases: [sgive]
+    aliases: [smartgive, sgive]
 
 # Permissions
 permissions:
-  smartgive.use:
-    description: Permet d'utiliser la commande /smartgive
-    default: op
   minecraft.command.give:
     description: Permet d'utiliser la commande /give (remplacée par SmartGive)
     default: op
