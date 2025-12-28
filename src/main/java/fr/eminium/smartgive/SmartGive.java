@@ -19,24 +19,35 @@ public class SmartGive extends JavaPlugin {
     private static SmartGive instance;
     private GiveCommand giveCommand;
 
-    @Override
-    public void onEnable() {
-        instance = this;
-        
-        // Sauvegarder la configuration par défaut si elle n'existe pas
-        saveDefaultConfig();
-        
-        // Initialiser le système de traduction
-        I18n.init(this);
-        
-        this.giveCommand = new GiveCommand();
-        
-        // Enregistrement de la commande et de son compléteur
-        this.getCommand("give").setExecutor(giveCommand);
-        this.getCommand("give").setTabCompleter(new GiveTabCompleter());
-        
-        getLogger().info("SmartGive activé avec succès !");
+    // Dans SmartGive.java, méthode onEnable()
+@Override
+public void onEnable() {
+    instance = this;
+    
+    // Sauvegarder la configuration par défaut si elle n'existe pas
+    saveDefaultConfig();
+    
+    // Initialiser le système de traduction
+    I18n.init(this);
+    
+    this.giveCommand = new GiveCommand();
+    
+    // Enregistrement de la commande et de son compléteur
+    this.getCommand("give").setExecutor(giveCommand);
+    this.getCommand("give").setTabCompleter(new GiveTabCompleter());
+    
+    // Enregistrement des alias
+    if (getCommand("smartgive") != null) {
+        getCommand("smartgive").setExecutor(giveCommand);
+        getCommand("smartgive").setTabCompleter(new GiveTabCompleter());
     }
+    if (getCommand("sgive") != null) {
+        getCommand("sgive").setExecutor(giveCommand);
+        getCommand("sgive").setTabCompleter(new GiveTabCompleter());
+    }
+    
+    getLogger().info("SmartGive activé avec succès !");
+}
 
     @Override
     public void onDisable() {
