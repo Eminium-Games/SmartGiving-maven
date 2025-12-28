@@ -1,0 +1,27 @@
+name: SmartGive
+version: ${project.version}
+main: fr.eminium.smartgive.SmartGive
+api-version: '1.20'
+description: Un plugin qui remplace la commande give pour supporter les items vanilla et les loot tables
+author: Eminium
+
+# Priorité haute pour écraser la commande give de base
+commands:
+  give:
+    description: Donne un item ou un loot à un joueur
+    usage: /give <joueur> <item|loottable> [quantité]
+    permission: minecraft.command.give
+  smartgive:
+    description: Alias de /give
+    usage: /smartgive <joueur> <item|loottable> [quantité]
+    permission: smartgive.use
+    aliases: [sgive]
+
+# Permissions
+permissions:
+  smartgive.use:
+    description: Permet d'utiliser la commande /smartgive
+    default: op
+  minecraft.command.give:
+    description: Permet d'utiliser la commande /give (remplacée par SmartGive)
+    default: op
