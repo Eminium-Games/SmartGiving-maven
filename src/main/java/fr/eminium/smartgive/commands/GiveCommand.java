@@ -21,32 +21,27 @@ public class GiveCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            I18n.sendMessage(sender, "only_players");
-            return true;
-        }
-        
-        if (args.length < 1) {
-            I18n.sendMessage(sender, "invalid_usage");
+        // Vérification des permissions
+        if (!sender.hasPermission("minecraft.command.give")) {
+            I18n.sendMessage(sender, "no_permission");
             return true;
         }
 
-        // Gestion des arguments
+        // Vérification des arguments
+        if (args.length < 2) {
+            I18n.sendMessage(sender, "usage", "/" + label + " <player> <item> [amount]");
+            return true;
+        }
+
+        // Récupération du joueur cible
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
             I18n.sendMessage(sender, "player_not_found", args[0]);
             return true;
         }
 
-        if (args.length < 2) {
-            I18n.sendMessage(sender, "specify_item_or_loot");
-            return true;
-        }
-
-        String itemName = args[1].toLowerCase();
+        // Récupération de la quantité
         int amount = 1;
-
-        // Vérification de la quantité
         if (args.length >= 3) {
             try {
                 amount = Integer.parseInt(args[2]);
@@ -55,31 +50,29 @@ public class GiveCommand implements CommandExecutor {
                     return true;
                 }
             } catch (NumberFormatException e) {
-                I18n.sendMessage(sender, "invalid_amount");
+                I18n.sendMessage(sender, "invalid_number", args[2]);
                 return true;
             }
         }
+
+        String itemName = args[1].toLowerCase();
+        ItemStack item = null;
 
         // Vérification si c'est un item vanilla
         if (plugin.isVanillaItem(itemName)) {
             Material material = Material.matchMaterial(itemName);
             if (material != null) {
-                ItemStack item = new ItemStack(material, amount);
-                target.getInventory().addItem(item);
-                I18n.sendMessage(sender, "give_success", amount, material.name().toLowerCase(), target.getName());
-                return true;
+                item = new ItemStack(material, amount);
             }
         }
         // Vérification si c'est une loot table
         else if (plugin.isLootTable(itemName)) {
             String[] parts = itemName.split(":");
             String namespace = parts.length > 1 ? parts[0] : "minecraft";
-            String key = parts.length > 1 ? parts[1] : parts[0];
+            String path = parts.length > 1 ? parts[1] : parts[0];
             
             // Exécution de la commande loot
-            String lootCommand = String.format("loot give %s loot %s:%s", 
-                target.getName(), namespace, key);
-            
+            String lootCommand = String.format("loot give %s loot %s", target.getName(), itemName);
             for (int i = 0; i < amount; i++) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), lootCommand);
             }
@@ -87,9 +80,15 @@ public class GiveCommand implements CommandExecutor {
             I18n.sendMessage(sender, "give_loot_success", itemName, amount, target.getName());
             return true;
         }
-        
-        // Si on arrive ici, l'item n'est ni vanilla ni une loot table valide
-        I18n.sendMessage(sender, "invalid_item", itemName);
+
+        if (item == null) {
+            I18n.sendMessage(sender, "item_not_found", itemName);
+            return true;
+        }
+
+        // Don de l'item au joueur
+        target.getInventory().addItem(item);
+        I18n.sendMessage(sender, "give_success", amount, item.getType().name().toLowerCase(), target.getName());
         return true;
     }
 }
