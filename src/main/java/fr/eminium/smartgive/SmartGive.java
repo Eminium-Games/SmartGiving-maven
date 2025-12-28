@@ -11,6 +11,7 @@ import org.bukkit.loot.LootTable;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.eminium.smartgive.commands.GiveCommand;
+import fr.eminium.smartgive.commands.GiveTabCompleter;
 import fr.eminium.smartgive.utils.I18n;
 
 public class SmartGive extends JavaPlugin {
@@ -30,8 +31,9 @@ public class SmartGive extends JavaPlugin {
         
         this.giveCommand = new GiveCommand();
         
-        // Enregistrement de la commande
+        // Enregistrement de la commande et de son compléteur
         this.getCommand("give").setExecutor(giveCommand);
+        this.getCommand("give").setTabCompleter(new GiveTabCompleter());
         
         getLogger().info("SmartGive activé avec succès !");
     }
