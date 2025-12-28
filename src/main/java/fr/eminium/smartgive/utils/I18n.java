@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class I18n {
@@ -89,24 +88,9 @@ public class I18n {
     }
     
     public static String translate(CommandSender sender, String key, Object... args) {
-        Locale locale = defaultLocale;
-        if (sender instanceof Player) {
-            try {
-                String lang = ((Player) sender).getLocale();
-                if (lang != null && !lang.isEmpty()) {
-                    String language = lang.split("_")[0];
-                    Locale playerLocale = new Locale(language);
-                    // Vérifier si la traduction existe pour cette locale
-                    if (translations.containsKey(playerLocale)) {
-                        locale = playerLocale;
-                    }
-                }
-            } catch (Exception e) {
-                // En cas d'erreur, on utilise la locale par défaut
-                plugin.getLogger().warning("Error getting player locale: " + e.getMessage());
-            }
-        }
-        return translate(locale, key, args);
+        // Pour le moment, on utilise toujours la locale par défaut
+        // car la méthode getLocale() n'est pas disponible dans cette version de Bukkit
+        return translate(defaultLocale, key, args);
     }
     
     public static void sendMessage(CommandSender sender, String key, Object... args) {
