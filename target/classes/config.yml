@@ -1,0 +1,29 @@
+# Configuration de SmartGive
+# Version: 1.0
+
+# Paramètres généraux
+settings:
+  # Limite de quantité maximale pour les items (1-64)
+  max_stack_size: 64
+  
+  # Message de préfixe pour les messages du plugin
+  prefix: '&8[&6SmartGive&8] &r'
+
+# Paramètres des commandes
+commands:
+  # Activer/désactiver les messages de débogage
+  debug: false
+  
+  # Liste des mondes où la commande est désactivée
+  disabled_worlds: []
+  # Exemple:
+  # - world_nether
+  # - world_the_end
+
+# Paramètres des messages
+messages:
+  # Activer les couleurs dans les messages
+  colors: true
+  
+  # Langue par défaut (fr, en, etc.)
+  default_language: fr

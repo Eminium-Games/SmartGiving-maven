@@ -22,6 +22,9 @@ public class SmartGive extends JavaPlugin {
     public void onEnable() {
         instance = this;
         
+        // Sauvegarder la configuration par défaut si elle n'existe pas
+        saveDefaultConfig();
+        
         // Initialiser le système de traduction
         I18n.init(this);
         
