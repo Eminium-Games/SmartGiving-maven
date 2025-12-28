@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import fr.eminium.smartgive.SmartGive;
+import fr.eminium.smartgive.utils.I18n;
 
 public class GiveCommand implements CommandExecutor {
 
@@ -22,26 +23,24 @@ public class GiveCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Cette commande ne peut être utilisée que par un joueur.");
+            I18n.sendMessage(sender, "only_players");
             return true;
         }
-
-        Player player = (Player) sender;
         
         if (args.length < 1) {
-            player.sendMessage("§cUtilisation: /give <joueur> <item|loottable> [quantité]");
+            I18n.sendMessage(sender, "invalid_usage");
             return true;
         }
 
         // Gestion des arguments
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            player.sendMessage("§cJoueur introuvable.");
+            I18n.sendMessage(sender, "player_not_found", args[0]);
             return true;
         }
 
         if (args.length < 2) {
-            player.sendMessage("§cVeuillez spécifier un item ou une loot table.");
+            I18n.sendMessage(sender, "specify_item_or_loot");
             return true;
         }
 
@@ -52,10 +51,12 @@ public class GiveCommand implements CommandExecutor {
         if (args.length >= 3) {
             try {
                 amount = Integer.parseInt(args[2]);
-                if (amount < 1) amount = 1;
-                if (amount > 64) amount = 64; // Limite de pile
+                if (amount < 1 || amount > 64) {
+                    I18n.sendMessage(sender, "invalid_amount");
+                    return true;
+                }
             } catch (NumberFormatException e) {
-                player.sendMessage("§cLa quantité doit être un nombre valide.");
+                I18n.sendMessage(sender, "invalid_amount");
                 return true;
             }
         }
@@ -66,7 +67,7 @@ public class GiveCommand implements CommandExecutor {
             if (material != null) {
                 ItemStack item = new ItemStack(material, amount);
                 target.getInventory().addItem(item);
-                player.sendMessage("§aDonné " + amount + " " + itemName + " à " + target.getName());
+                I18n.sendMessage(sender, "give_success", amount, material.name().toLowerCase(), target.getName());
                 return true;
             }
         }
@@ -84,12 +85,12 @@ public class GiveCommand implements CommandExecutor {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), lootCommand);
             }
             
-            player.sendMessage("§aDonné " + amount + " fois la loot table " + itemName + " à " + target.getName());
+            I18n.sendMessage(sender, "give_loot_success", itemName, amount, target.getName());
             return true;
         }
         
         // Si on arrive ici, l'item n'est ni vanilla ni une loot table valide
-        player.sendMessage("§cItem ou loot table introuvable: " + itemName);
+        I18n.sendMessage(sender, "invalid_item", itemName);
         return true;
     }
 }

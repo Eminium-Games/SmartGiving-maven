@@ -11,6 +11,7 @@ import org.bukkit.loot.LootTable;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.eminium.smartgive.commands.GiveCommand;
+import fr.eminium.smartgive.utils.I18n;
 
 public class SmartGive extends JavaPlugin {
 
@@ -20,6 +21,13 @@ public class SmartGive extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        
+        // Sauvegarder la config par défaut si elle n'existe pas
+        saveDefaultConfig();
+        
+        // Initialiser le système de traduction
+        I18n.init(this);
+        
         this.giveCommand = new GiveCommand();
         
         // Enregistrement de la commande
