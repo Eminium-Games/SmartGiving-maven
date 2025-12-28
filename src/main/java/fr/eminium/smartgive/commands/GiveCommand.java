@@ -1,6 +1,7 @@
 package fr.eminium.smartgive.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import fr.eminium.smartgive.SmartGive;
-import fr.eminium.smartgive.utils.I18n;
 
 public class GiveCommand implements CommandExecutor {
 
@@ -23,20 +23,20 @@ public class GiveCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // Vérification des permissions
         if (!sender.hasPermission("minecraft.command.give")) {
-            I18n.sendMessage(sender, "no_permission");
+            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
             return true;
         }
 
         // Vérification des arguments
         if (args.length < 2) {
-            I18n.sendMessage(sender, "usage", "/" + label + " <player> <item> [amount]");
+            sender.sendMessage(ChatColor.RED + "Usage: /" + label + " <player> <item> [amount]");
             return true;
         }
 
         // Récupération du joueur cible
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            I18n.sendMessage(sender, "player_not_found", args[0]);
+            sender.sendMessage(ChatColor.RED + "Player not found: " + args[0]);
             return true;
         }
 
@@ -46,11 +46,11 @@ public class GiveCommand implements CommandExecutor {
             try {
                 amount = Integer.parseInt(args[2]);
                 if (amount < 1 || amount > 64) {
-                    I18n.sendMessage(sender, "invalid_amount");
+                    sender.sendMessage(ChatColor.RED + "Amount must be between 1 and 64.");
                     return true;
                 }
             } catch (NumberFormatException e) {
-                I18n.sendMessage(sender, "invalid_number", args[2]);
+                sender.sendMessage(ChatColor.RED + "'" + args[2] + "' is not a valid number.");
                 return true;
             }
         }
@@ -67,28 +67,22 @@ public class GiveCommand implements CommandExecutor {
         }
         // Vérification si c'est une loot table
         else if (plugin.isLootTable(itemName)) {
-            String[] parts = itemName.split(":");
-            String namespace = parts.length > 1 ? parts[0] : "minecraft";
-            String path = parts.length > 1 ? parts[1] : parts[0];
-            
-            // Exécution de la commande loot
             String lootCommand = String.format("loot give %s loot %s", target.getName(), itemName);
             for (int i = 0; i < amount; i++) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), lootCommand);
             }
-            
-            I18n.sendMessage(sender, "give_loot_success", itemName, amount, target.getName());
+            sender.sendMessage(String.format("§aGave loot table %s %d times to %s", itemName, amount, target.getName()));
             return true;
         }
 
         if (item == null) {
-            I18n.sendMessage(sender, "item_not_found", itemName);
+            sender.sendMessage(ChatColor.RED + "Item or loot table not found: " + itemName);
             return true;
         }
 
         // Don de l'item au joueur
         target.getInventory().addItem(item);
-        I18n.sendMessage(sender, "give_success", amount, item.getType().name().toLowerCase(), target.getName());
+        sender.sendMessage(String.format("§aGave %d %s to %s", amount, item.getType().name().toLowerCase(), target.getName()));
         return true;
     }
 }
